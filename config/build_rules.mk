@@ -22,11 +22,21 @@ SEARCH_DIR_SOURCES = $(foreach EXT,$(SRC_EXTENSIONS),$(wildcard $(1)*.$(EXT)))
 SOURCES := $(foreach DIR,$(SOURCEDIRS),$(call SEARCH_DIR_SOURCES,$(DIR)))
 OBJECTS = $(addprefix $(OBJDIR)/,$(addsuffix .o, $(notdir $(basename $(1)))))
 
-dependencies: $(SOURCES)
-	@$(CPP) $^ -M -MD -o $(OBJDIR)/depend.d
-	
-$(BINDIR)/$(TARGETNAME): $(SOURCES)
-	$(CPP) $(COMMONFLAGS) $(ALL_CFLAGS) $(ALL_CPPFLAGS) $^ -o $@
+$(BINDIR)/$(TARGETNAME): $(call OBJECTS,$(SOURCES))
+	@echo ... linking:     $(notdir $@)
+	@$(CPP)  $(LDFLAGS) $^ $(LIBSFLAGS) -o $@
+
+$(OBJDIR)/%.o: %.s
+	@echo ... assembling: $<
+	@$(CPP) -c $(ALL_ASFLAGS) $< -o $@ 
+
+$(OBJDIR)/%.o: %.c
+	@echo ... compiling: $<
+	@$(CPP) -c $(ALL_CFLAGS) $< -o $@
+
+$(OBJDIR)/%.o: %.cpp
+	@echo ... compiling: $<
+	@$(CPP) -c $(ALL_CPPFLAGS) $< -o $@
 
 #===============================================================================
 gccversion:

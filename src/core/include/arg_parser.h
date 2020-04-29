@@ -30,5 +30,13 @@ public:
 //								PROCEDURES	
 //******************************************************************************
 void parse(size_t argc, char *argv[]);
-std::vector<KeyValuePair>* get_command_key_pairs(size_t argc, char *argv[]);
+
+
+
+
+
+
+
+
+
 #endif /* _ARGPARSER_H_ */

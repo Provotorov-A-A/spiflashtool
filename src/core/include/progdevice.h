@@ -27,20 +27,17 @@ static const std::string operation_enum_to_string[] = {"NOT_SPECIFIED", "READ_ME
 
 struct ProgDeviceOptions
 {
-	ProgDevOperationType	operation;
 	size_t 					address;
 	size_t 					size;
 	std::string 			filename;
 	bool 					check_crc;
 	bool 					verbose;	
 
-	ProgDeviceOptions() : 	operation(PROGDEV_OPERATION_NOT_SPECIFIED), 
-							address(0), size(0), filename(""), 
+	ProgDeviceOptions() : 	address(0), size(0), filename(""), 
 							check_crc(false), verbose(false)
 							{ };
 	void print() const
 	{
-		std::cout << "	operation 	: " << operation_enum_to_string[operation] << std::endl;
 		std::cout << "	address 	: " << address << std::endl;
 		std::cout << "	size 		: " << size << std::endl;
 		std::cout << "	filename 	: " << filename << std::endl;

@@ -25,8 +25,8 @@ VPATH +=  $(INCDIRS) $(SOURCEDIRS)
 #===============================================================================
 .PHONY: all outdirs gccversion clean
 
-all: outdirs dependencies $(BINDIR)/$(TARGETNAME)
+#all: outdirs dependencies $(BINDIR)/$(TARGETNAME)
+all: outdirs  $(BINDIR)/$(TARGETNAME)
 
 include $(PROJ_ROOT)/$(CONFIG_DIR)/build_rules.mk
-#include $(OBJDIR)/depend.d
 include $(wildcard $(OBJDIR)/*.d)

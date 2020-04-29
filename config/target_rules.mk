@@ -8,7 +8,7 @@ COMMONFLAGS  = -Wall
 COMMONFLAGS += -O$(OPTIM)
 #COMMONFLAGS += -g$(DEBUG)
 COMMONFLAGS += $(patsubst %,-I%,$(patsubst %/,%,$(INCDIRS)))
-#COMMONFLAGS += -MD
+COMMONFLAGS += -MD
 
 #===============================================================================
 CFLAGS  = $(CDEFS)
