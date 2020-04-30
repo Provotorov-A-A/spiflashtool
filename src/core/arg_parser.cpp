@@ -3,7 +3,7 @@
 //******************************************************************************
 #include "include/arg_parser.h"
 #include "include/global_opts.h"
-#include "include/serial.h"
+#include "include/serial_interface.h"
 #include "include/progdevice.h"
 
 //******************************************************************************
@@ -28,15 +28,10 @@ extern GlobalOptions global_opts;
 //------------------------------------------------------------------------------
 void parse(size_t argc, char *argv[])
 {
+	bool operation_is_defined = false;
+	size_t cur_opt_index = 0;			// for exception handler
 	std::vector<KeyValuePair>* opt_pairs_list = get_command_key_pairs(argc, argv);
 	
-	cout << "Size = " << opt_pairs_list->size() << endl;
-	for (size_t i = 0; i < opt_pairs_list->size(); ++i)
-	{
-		cout << "Pair[" << i << "] = " << (*opt_pairs_list)[i].key << " : " << (*opt_pairs_list)[i].value << endl;
-	}
-	
-	size_t cur_opt_index = 0;		// for exception handler
 	try
 	{
 		for (size_t i = 0; i < opt_pairs_list->size(); ++i)
@@ -47,9 +42,14 @@ void parse(size_t argc, char *argv[])
 			{
 				if (0 != (*opt_pairs_list)[i].value.compare("") )
 				{
-					throw(std::invalid_argument(""));
+					throw(std::invalid_argument("Extra value for " + (*opt_pairs_list)[i].key));
+				}
+				if (operation_is_defined)
+				{
+					throw(std::invalid_argument("duplicate operation key"));
 				}
 				global_opts.operation = TOOL_OPERATION_READ_MEM;
+				operation_is_defined = true;
 				continue;
 			}
 	// -write
@@ -57,9 +57,14 @@ void parse(size_t argc, char *argv[])
 			{
 				if (0 != (*opt_pairs_list)[i].value.compare("") )
 				{
-					throw(std::invalid_argument(""));
+					throw(std::invalid_argument("Extra value for " + (*opt_pairs_list)[i].key));
+				}
+				if (operation_is_defined)
+				{
+					throw(std::invalid_argument("duplicate operation key"));
 				}
 				global_opts.operation = TOOL_OPERATION_WRITE_MEM;
+				operation_is_defined = true;
 				continue;
 			}
 	// -read_id
@@ -67,9 +72,14 @@ void parse(size_t argc, char *argv[])
 			{
 				if (0 != (*opt_pairs_list)[i].value.compare("") )
 				{
-					throw(std::invalid_argument(""));
+					throw(std::invalid_argument("Extra value for " + (*opt_pairs_list)[i].key));
+				}
+				if (operation_is_defined)
+				{
+					throw(std::invalid_argument("duplicate operation key"));
 				}
 				global_opts.operation = TOOL_OPERATION_READ_JEDEC_ID;
+				operation_is_defined = true;
 				continue;
 			}
 	// -erase
@@ -77,19 +87,29 @@ void parse(size_t argc, char *argv[])
 			{
 				if (0 != (*opt_pairs_list)[i].value.compare("") )
 				{
-					throw(std::invalid_argument(""));
+					throw(std::invalid_argument("Extra value for " + (*opt_pairs_list)[i].key));
+				}
+				if (operation_is_defined)
+				{
+					throw(std::invalid_argument("duplicate operation key"));
 				}
 				global_opts.operation = TOOL_OPERATION_ERASE_MEM;
+				operation_is_defined = true;
 				continue;
 			}
 	// -help
-			if (0 == (*opt_pairs_list)[i].key.compare("-help") )
+			if ( (0 == (*opt_pairs_list)[i].key.compare("-help") ) || (0 == (*opt_pairs_list)[i].key.compare("--help")) )
 			{
 				if (0 != (*opt_pairs_list)[i].value.compare("") )
 				{
-					throw(std::invalid_argument(""));
+					throw(std::invalid_argument("Extra value for " + (*opt_pairs_list)[i].key));
+				}
+				if (operation_is_defined)
+				{
+					throw(std::invalid_argument("duplicate operation key"));
 				}
 				global_opts.operation = TOOL_OPERATION_HELP_PRINT;
+				operation_is_defined = true;
 				continue;
 			}
 			
@@ -153,24 +173,22 @@ void parse(size_t argc, char *argv[])
 			
 			//----------------------------------------------------------------------
 			// Unknown key
-			throw(ArgParserException("Unknown key" + (*opt_pairs_list)[i].key));
+			throw(std::invalid_argument("Unknown key " + (*opt_pairs_list)[i].key));
 			return;			
 		}	/*for ...*/
 	}
-	catch (ArgParserException& ex)
+	//catch (std::invalid_argument& ex)
+	catch (std::logic_error& ex)
 	{
-		string msg = "Unknown key \"" + (*opt_pairs_list)[cur_opt_index].key + "\"";
-		opt_pairs_list->clear();
-		delete opt_pairs_list;
-		throw(ArgParserException(msg));
-	}
-	catch (...)
-	{
-		string msg = "Value \"" + (*opt_pairs_list)[cur_opt_index].value + "\" is invalid for key \"" + (*opt_pairs_list)[cur_opt_index].key + "\"";
+		string msg = "Parsing error with key \"" + (*opt_pairs_list)[cur_opt_index].key + "\" and value \"" + (*opt_pairs_list)[cur_opt_index].value + "\" : " + ex.what();
 		opt_pairs_list->clear();
 		delete opt_pairs_list;
 		throw(ArgParserException(msg));
 	}		
+	catch (...)
+	{
+		string msg = "Parsing error with key \"" + (*opt_pairs_list)[cur_opt_index].key + "\" and value \"" + (*opt_pairs_list)[cur_opt_index].value + "\"";
+	}	
 }
 
 //------------------------------------------------------------------------------
@@ -226,8 +244,11 @@ static size_t str_to_uint(std::string s)
 	return 	(res*mul);
 	
 }
+
 //------------------------------------------------------------------------------
-// 
+// Allocates and returns vector with parsed pairs key-value. 
+// Checks every key has no or has one value token.
+// Throws: ArgParserException
 //------------------------------------------------------------------------------
 static std::vector<KeyValuePair>* get_command_key_pairs(size_t argc, char *argv[])
 {
@@ -238,10 +259,15 @@ static std::vector<KeyValuePair>* get_command_key_pairs(size_t argc, char *argv[
 	bool token_is_value;
 	string empty_str = string("");
 	
+	if (argc < 2)
+	{
+		throw(ArgParserException("no arguments"));
+	}
+	
 	// If first token is a value - error
 	if ('-' != argv[1][0])
 	{
-		throw(ArgParserException("Argument parsing error: expected key, but value founded"));
+		throw(ArgParserException("expected key, but value founded"));
 	}
 	
 	pairsList = new std::vector<KeyValuePair>;

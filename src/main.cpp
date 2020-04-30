@@ -6,9 +6,10 @@
 #include <algorithm>
 
 #include "core/include/arg_parser.h"
-#include "core/include/serial.h"
+#include "core/include/serial_interface.h"
 #include "core/include/progdevice.h"
 #include "core/include/global_opts.h"
+#include "target_specific/include/win_serial.h"
 
 //******************************************************************************
 //								TYPES
@@ -19,6 +20,29 @@ using namespace std;
 //								VARIABLES
 //******************************************************************************
 GlobalOptions global_opts;
+
+static const std::string help_str= std::string
+(
+"Usage: spiflashtool [operation] <key1> <value1> <key2> <value2> ...\n" \
+"operation: -read, -write, -read_id, -erase, -help\n" \
+"Keys:\n" \
+"  -address        start address in flash memory for specified operation. Default value = 0.\n" \
+"  -size           data size in bytes that will be read/write/erased. Default value = 0. For write operation 0 means \"all file\"\n" \
+"  -filename       data source for write operation and data destination for read operation\n" \
+"  -crc            switch on CRC16 calculating for every data packet\n" \
+"  -verbose        full process listing\n" \
+"  -port           serial port name\n" \
+"  -baudrate       serial baudrate\n"
+);
+
+//******************************************************************************
+//								PROCEDURES
+//******************************************************************************
+static void help_print()
+{
+	std::cout << std::endl << help_str;
+}
+
 //******************************************************************************
 //								ENTRY
 //******************************************************************************
@@ -31,19 +55,64 @@ int main(int argc, char *argv[])
 	}
 	catch (ArgParserException& e)
 	{
-		((CommonException&)e).print();
+		((CommonException&)e).what();
+		exit(-1);
 	}
 	catch(...)
 	{
-		cout << "UNKNOWN EXCEPTION RAISED!" << std::endl;
+		std::cout << "UNKNOWN EXCEPTION RAISED!" << std::endl;
+		exit(-1);
 	}
 
-	
-
-	
 	cout << "==================================================================" << endl;
 	global_opts.print();
 	cout << "==================================================================" << endl;
+
+
+//----------------------------------------------
+// DEBUG
+	WindowsSerial serial;
+	std::string s;
+	std::getline(std::cin, s);
+	try 
+	{
+		serial.open(global_opts.hardware_if_opts);
+		serial.write((uint8_t*)s.data(), 1);
+	}
+	catch (ArgParserException& e)
+	{
+		((CommonException&)e).what();
+	}
+	catch(...)
+	{
+		std::cout << "UNKNOWN EXCEPTION RAISED!" << std::endl;
+	}	
+// DEBUG END
+//----------------------------------------------
+
+
+	// Perform specified operation
+	switch (global_opts.operation)
+	{
+		case TOOL_OPERATION_HELP_PRINT:
+		{
+			help_print();
+		}
+		break;
+
+		case TOOL_OPERATION_READ_JEDEC_ID:
+		{
+			
+		}
+		break;
+
+		
+		default:
+		{
+			std::cout << "No operation was specified. Exit." << std::endl;
+		}
+	}
+
 		
 	return 0;
 }

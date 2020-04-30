@@ -4,7 +4,6 @@
 //******************************************************************************
 //								INCLUDES
 //******************************************************************************
-
 #include <cstdint>
 #include <string>
 
@@ -13,7 +12,6 @@
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-
 enum SerialOptionsParity
 {
 	SERIAL_OPTIONS_PARITY_NOPARITY = 0,
@@ -58,7 +56,6 @@ struct SerialOptions
 							baudrate(9600), 
 							parity(SERIAL_OPTIONS_PARITY_NOPARITY),
 							stopbits(SERIAL_OPTIONS_STOPBITS_ONESTOPBIT)
-							
 	{};
 	
 	void print() const
@@ -70,5 +67,25 @@ struct SerialOptions
 	}
 };
 
+//==============================================================================
+class HW_IO_Error : CommonException
+{
+public:
+	HW_IO_Error () : CommonException("hardware interface","") 
+	{};
+	HW_IO_Error (const std::string& s) : CommonException("hardware interface", s) 
+	{};
+};
+
+//==============================================================================
+class SerialInterface
+{
+public:
+	virtual std::string get_name();
+	virtual void open(const SerialOptions& opts);
+	virtual void close();
+	virtual void write(const uint8_t* const src, size_t size);
+	virtual void read(uint8_t* const dst, size_t size);
+};
 
 #endif /* _SERIAL_H_ */

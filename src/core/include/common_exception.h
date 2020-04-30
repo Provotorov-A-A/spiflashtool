@@ -18,9 +18,16 @@ private:
 	std::string description;
 public:	
 	CommonException(std::string module, std::string d) : module_name(module), description(d) {};
-	void print()
+	void what()
 	{
-		std::cout << "Error occured in module \"" << module_name << "\" :"<< std::endl << description << std::endl;
+		if (0 == description.size())
+		{
+			std::cout << "Unknown exception occured in module \"" << module_name << "\" : " << std::endl;
+		}
+		else
+		{
+			std::cout << "Exception occured in module \"" << module_name << "\" : "<< description << std::endl;
+		}
 	}
 };
 

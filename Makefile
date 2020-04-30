@@ -1,9 +1,10 @@
 #===============================================================================
 SOURCEDIRS := ./src/
 SOURCEDIRS += ./src/core/
+SOURCEDIRS += ./src/target_specific/
 INCDIRS := $(SOURCEDIRS)
 INCDIRS += ./src/core/include/
-
+INCDIRS +=  ./src/target_specific/include
 OPTIM  = fast
 #===============================================================================
 TARGETNAME := $(notdir $(CURDIR))

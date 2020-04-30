@@ -7,7 +7,7 @@
 #include <iostream>
 #include <string>
 
-#include "serial.h"
+#include "serial_interface.h"
 #include "progdevice.h"
 #include "common_exception.h"
 
