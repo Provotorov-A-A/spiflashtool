@@ -13,12 +13,18 @@
 
 class CommonException
 {
-private:
+protected:
 	std::string module_name;
 	std::string description;
 public:	
 	CommonException(std::string module, std::string d) : module_name(module), description(d) {};
-	void what()
+
+	const char* what() const 
+	{
+		return description.c_str();
+	};
+	
+	void print()
 	{
 		if (0 == description.size())
 		{

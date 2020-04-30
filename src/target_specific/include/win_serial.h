@@ -21,10 +21,18 @@ private:
 	std::string name;
 	SerialOptions opts;
 	HANDLE hSerial;
+	
 	std::string get_valid_serial_name(const std::string& comname);
+	void open();
+	void close();
+	
 public:
-	WindowsSerial() : name(""), opts(), hSerial(0)
-	{}
+	WindowsSerial(const SerialOptions& opts) : name(""), hSerial(0)
+	{
+		this->opts = opts;
+		open();
+	}
+	
 	~WindowsSerial()
 	{
 		if (hSerial) 
@@ -35,10 +43,8 @@ public:
 	
 	std::string get_name();
 	
-	void open(const SerialOptions& opts);
-	void close();
-	void write(const uint8_t* const src, size_t size);
-	void read(uint8_t* const dst, size_t size);	
+	void write(const uint8_t* const src, const size_t size);
+	void read(uint8_t* const dst, const size_t size);	
 };
 
 #endif /* _WIN_SERIAL_H_ */

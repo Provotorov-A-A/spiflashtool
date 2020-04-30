@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 	}
 	catch (ArgParserException& e)
 	{
-		((CommonException&)e).what();
+		((CommonException&)e).print();
 		exit(-1);
 	}
 	catch(...)
@@ -71,18 +71,24 @@ int main(int argc, char *argv[])
 
 //----------------------------------------------
 // DEBUG
-	WindowsSerial serial;
-	std::string s;
-	std::getline(std::cin, s);
 	try 
 	{
-		serial.open(global_opts.hardware_if_opts);
-		serial.write((uint8_t*)s.data(), 1);
+		WindowsSerial serial(global_opts.hardware_if_opts);
+		ProgDevice pd((SerialInterface*)&serial);
+		pd.util_link();
 	}
 	catch (ArgParserException& e)
 	{
-		((CommonException&)e).what();
+		((CommonException&)e).print();
 	}
+	catch (HW_IO_Error& e)
+	{
+		((CommonException&)e).print();
+	}
+	catch (ProgDevice_Error& e)
+	{
+		((CommonException&)e).print();
+	}	
 	catch(...)
 	{
 		std::cout << "UNKNOWN EXCEPTION RAISED!" << std::endl;

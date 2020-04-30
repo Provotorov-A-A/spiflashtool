@@ -14,7 +14,7 @@
 
 
 //******************************************************************************
-//								TYPES
+//								PROCEDURES
 //******************************************************************************
 //------------------------------------------------------------------------------
 
@@ -27,14 +27,14 @@ std::string WindowsSerial::get_name()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void WindowsSerial::open(const SerialOptions& opts)
+void WindowsSerial::open()
 {
     COMMTIMEOUTS timeouts;
  	DCB dcbSerialParams;
  	
 	std::string name = get_valid_serial_name(opts.name);
 	
-    hSerial = CreateFileA( 	name.data(), 
+    hSerial = CreateFile( 	name.data(), 
 							GENERIC_READ | GENERIC_WRITE, 
 							0, 							// must be opened with exclusive-access
 							NULL, 						// default security attributes
@@ -108,7 +108,7 @@ void WindowsSerial::close()
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void WindowsSerial::read( uint8_t* const pdata, const size_t size)
+void WindowsSerial::read(uint8_t* const pdata, const size_t size)
 {
 	DWORD dwBytesRead = 0;
 	if ( !ReadFile(hSerial, pdata, size, &dwBytesRead, NULL))

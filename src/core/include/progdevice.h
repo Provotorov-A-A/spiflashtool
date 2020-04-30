@@ -9,6 +9,8 @@
 	| CMD_TRANSACTION_START	(1)		|	SIZE	(2)	|	DATA_OUT(1..256)	|	==>		| RESPONSE_TRANSACTION_START	(1)		|	STATUS	(1)	|	DATA_IN (1..256) (IF STATUS OK)	|
 	| CMD_EXIT				(1)		|	ADDRESS (8)	|							==>		| RESPONSE_EXIT 				(1)		|	STATUS	(1)	|
 	| CMD_BAUDRATE			(1)		|	BAUDRATE(4)	|							==>		| RESPONSE_BAUDRATE				(1)		|	STATUS	(1)	|
+	| CMD_CS_SET			(1)		|				|							==>		| RESPONSE_CS_SET				(1)		|	
+	| CMD_CS_CLEAR			(1)		|				|							==>		| RESPONSE_CS_CLEAR				(1)		|	
 	
 	* NOTE: RESPONSE_BAUDRATE response and STATUS for that command transmitted on an old baudrate. Bootloader checks if it can set this speed and return STATUS_OK if it can.
 */
@@ -21,18 +23,11 @@
 #include <string>
 
 #include "common_exception.h"
+#include "serial_interface.h"
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-typedef enum
-{
-	USA_TRANSACTION_STATUS_OK 				= 0x01,
-	USA_TRANSACTION_STATUS_INVALID 			= 0x02,
-	USA_TRANSACTION_STATUS_HW_ERROR			= 0x04,
-} uart_spi_adapter_transaction_status;
-
-
 enum CS_State
 {
 	CS_STATE_ACTIVE,
@@ -48,8 +43,8 @@ struct ProgDeviceOptions
 	size_t 					size;
 	std::string 			filename;
 	bool 					check_crc;
-	bool 					verbose;	
-
+	bool 					verbose;
+	
 	ProgDeviceOptions() : 	address(0), size(0), filename(""), 
 							check_crc(false), verbose(false)
 	{ };
@@ -80,16 +75,39 @@ struct ProgDeviceOptions
 };
 
 //==============================================================================
+class ProgDevice_Error : public CommonException
+{
+public:
+	ProgDevice_Error () : CommonException("programming device protocol", "")
+	{};
+	ProgDevice_Error (const std::string& s) : CommonException("programming device protocol",s)
+	{};
+
+};
+
+//==============================================================================
 class ProgDevice
 {
 private:
 	enum
 	{
-		USA_PROTO_HEADER_LINK		= 'L',
-		USA_PROTO_HEADER_CMD_START 	= 'S',
-		USA_PROTO_HEADER_EXIT		= 'E',
-		USA_PROTO_HEADER_BAUDRATE	= 'B'
-	} uart_spi_adapter_proto_header;
+		PROGDEV_PROTO_HEADER_CMD_LINK		= 'L',
+		PROGDEV_PROTO_HEADER_CMD_START 		= 'S',
+		PROGDEV_PROTO_HEADER_CMD_EXIT		= 'E',
+		PROGDEV_PROTO_HEADER_CMD_BAUDRATE	= 'B',
+		PROGDEV_PROTO_HEADER_CMD_CS_SET		= 'O',
+		PROGDEV_PROTO_HEADER_CMD_CS_CLR		= 'Z',
+
+		PROGDEV_PROTO_HEADER_RESP_LINK		= 'L',
+		PROGDEV_PROTO_HEADER_RESP_START 	= 'S',
+		PROGDEV_PROTO_HEADER_RESP_EXIT		= 'E',
+		PROGDEV_PROTO_HEADER_RESP_BAUDRATE	= 'B',
+		PROGDEV_PROTO_HEADER_RESP_CS_SET	= 'O',
+		PROGDEV_PROTO_HEADER_RESP_CS_CLR	= 'Z',
+		
+		PROGDEV_PROTO_STATUS_RESP_OK		= 'K',
+		PROGDEV_PROTO_STATUS_RESP_ERROR		= 'R'
+	} ProgDeviceProtocolEnum;
 
 	typedef enum
 	{
@@ -97,26 +115,29 @@ private:
 		USA_PROTO_STATUS_FAIL		= 0xEE
 	} uart_spi_adapter_proto_status;
 
-	ProgDeviceOptions opts;
+	static const size_t 	data_size_max = 512;
+	ProgDeviceOptions 		opts;
+	SerialInterface*		serial;
+	
+	uint16_t crc16_calc(const uint8_t* const data, const size_t size) const {return 0x0000;};		// FIXME: implement crc16 function
 	
 public:
-	void exit_to(const uint32_t address) const;
-	void set_CS(const CS_State state)  const;
-	void write_from_file(const std::string& f, const uint32_t address, const size_t size)  const;
-	void read_to_file(const std::string& f, const uint32_t address, const size_t size)  const;
-	void erase(const uint32_t address, const size_t size)  const;
-	std::string read_jedec_id()  const;
-	ProgDeviceOptions& get_options()  const;
-	void set_options(const ProgDeviceOptions& opts);
-};
-
-//==============================================================================
-// void ProgDevice::exit_to(const uint32_t address) const
-// {
+	ProgDevice( SerialInterface* const pSerial) : opts(), serial(0)
+	{
+		if (0 == pSerial) 
+		{
+			throw ProgDevice_Error("no hardware interface instance specified for programming device");
+		}
+		this->serial = pSerial;
+	};
 	
-// };
+	void set_CS(const CS_State state)  const;
+	void data_xfer(const uint8_t* const src, uint8_t* const dst, const size_t size);
 
-
+	void util_link() const;
+	void util_exit_to(const uint32_t address) const;
+	void util_set_baudrate(const uint32_t b) const;
+};
 
 
 

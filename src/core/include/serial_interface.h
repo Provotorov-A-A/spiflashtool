@@ -58,6 +58,15 @@ struct SerialOptions
 							stopbits(SERIAL_OPTIONS_STOPBITS_ONESTOPBIT)
 	{};
 	
+	SerialOptions& operator= (const SerialOptions& opt)
+	{
+		this->name 		= opt.name;
+		this->baudrate 	= opt.baudrate;
+		this->parity 	= opt.parity;
+		this->stopbits 	= opt.stopbits;
+		return *this;
+	}
+	
 	void print() const
 	{
 		std::cout << "	name 		: " << name << std::endl;
@@ -82,10 +91,8 @@ class SerialInterface
 {
 public:
 	virtual std::string get_name();
-	virtual void open(const SerialOptions& opts);
-	virtual void close();
-	virtual void write(const uint8_t* const src, size_t size);
-	virtual void read(uint8_t* const dst, size_t size);
+	virtual void write(const uint8_t* const src, const size_t size);
+	virtual void read(uint8_t* const dst, const size_t size);
 };
 
 #endif /* _SERIAL_H_ */
