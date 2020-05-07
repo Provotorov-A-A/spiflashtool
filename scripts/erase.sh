@@ -1,0 +1,1 @@
+./OUTPUT/bin/spiflashtool.exe -erase -address 1 -size 64 -port COM15 -baudrate 57600 -verbose

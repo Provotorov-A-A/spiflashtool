@@ -17,6 +17,17 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+ProgDevice::ProgDevice( SerialInterface* const pSerial) : opts(), serial(0)
+{
+	if (0 == pSerial) 
+	{
+		throw ProgDevice_Error("no hardware interface instance specified for programming device");
+	}
+	this->serial = pSerial;	
+}
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 void ProgDevice::util_link() const
 {
 	uint8_t data[1] = {PROGDEV_PROTO_HEADER_CMD_LINK};
@@ -31,6 +42,8 @@ void ProgDevice::util_link() const
 	{
 		throw ProgDevice_Error("link command failed");
 	}
+	
+				std::cout << "LINK OK!" << std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -134,6 +147,7 @@ void ProgDevice::data_xfer(const uint8_t* const src, uint8_t* const dst, const s
 		// Check header and status
 		if ( (inbuf[0] != PROGDEV_PROTO_HEADER_RESP_START) || (inbuf[1] != PROGDEV_PROTO_STATUS_RESP_OK) )
 		{
+			std::cout << "inbuf[0] = " << (char)inbuf[0] << " inbuf[1] = " << (char)inbuf[1] << std::endl;
 			throw ProgDevice_Error("invalid response status or header");
 		}
 
@@ -157,6 +171,7 @@ void ProgDevice::data_xfer(const uint8_t* const src, uint8_t* const dst, const s
 	}
 	catch (ProgDevice_Error& e)
 	{
+		delete [] inbuf;
 		throw ProgDevice_Error(e.what());
 	}
 	catch (...)

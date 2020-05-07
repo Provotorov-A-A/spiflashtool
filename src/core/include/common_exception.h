@@ -24,15 +24,15 @@ public:
 		return description.c_str();
 	};
 	
-	void print()
+	void print() const
 	{
 		if (0 == description.size())
 		{
-			std::cout << "Unknown exception occured in module \"" << module_name << "\" : " << std::endl;
+			std::cout << std::endl << "Unknown exception occured in module \"" << module_name << "\" : " << std::endl;
 		}
 		else
 		{
-			std::cout << "Exception occured in module \"" << module_name << "\" : "<< description << std::endl;
+			std::cout << std::endl << "Exception occured in module \"" << module_name << "\" : "<< description << std::endl;
 		}
 	}
 };

@@ -29,5 +29,18 @@ VPATH +=  $(INCDIRS) $(SOURCEDIRS)
 #all: outdirs dependencies $(BINDIR)/$(TARGETNAME)
 all: outdirs  $(BINDIR)/$(TARGETNAME)
 
+read_id:
+	./scripts/read_id.sh
+	
+read:
+	./scripts/read.sh
+
+erase:
+	./scripts/erase.sh
+
+write:
+	./scripts/write.sh
+
+
 include $(PROJ_ROOT)/$(CONFIG_DIR)/build_rules.mk
 include $(wildcard $(OBJDIR)/*.d)

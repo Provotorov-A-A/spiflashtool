@@ -6,7 +6,7 @@
 	
 	CMD FORMAT:
 	| CMD_LINK				(1)		|				|							==>		| RESPONSE_LINK	(1)						|
-	| CMD_TRANSACTION_START	(1)		|	SIZE	(2)	|	DATA_OUT(1..256)	|	==>		| RESPONSE_TRANSACTION_START	(1)		|	STATUS	(1)	|	DATA_IN (1..256) (IF STATUS OK)	|
+	| CMD_TRANSACTION_START	(1)		|	SIZE	(2)	|	DATA_OUT(1..512)	|	==>		| RESPONSE_TRANSACTION_START	(1)		|	STATUS	(1)	|	DATA_IN (1..256) (IF STATUS OK)	|
 	| CMD_EXIT				(1)		|	ADDRESS (8)	|							==>		| RESPONSE_EXIT 				(1)		|	STATUS	(1)	|
 	| CMD_BAUDRATE			(1)		|	BAUDRATE(4)	|							==>		| RESPONSE_BAUDRATE				(1)		|	STATUS	(1)	|
 	| CMD_CS_SET			(1)		|				|							==>		| RESPONSE_CS_SET				(1)		|	
@@ -23,16 +23,12 @@
 #include <string>
 
 #include "common_exception.h"
+#include "spi_dev_if.h"
 #include "serial_interface.h"
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-enum CS_State
-{
-	CS_STATE_ACTIVE,
-	CS_STATE_INACTIVE = !CS_STATE_ACTIVE
-};
 
 static const std::string operation_enum_to_string[] = {"NOT_SPECIFIED", "READ_MEM", "WRITE_MEM", "READ_JEDEC_ID", "ERASE_MEM"};
 
@@ -82,14 +78,13 @@ public:
 	{};
 	ProgDevice_Error (const std::string& s) : CommonException("programming device protocol",s)
 	{};
-
 };
 
 //==============================================================================
-class ProgDevice
+class ProgDevice : public SpiDeviceInterface
 {
 private:
-	enum
+	enum ProgDeviceProtocolEnum : uint8_t
 	{
 		PROGDEV_PROTO_HEADER_CMD_LINK		= 'L',
 		PROGDEV_PROTO_HEADER_CMD_START 		= 'S',
@@ -107,7 +102,7 @@ private:
 		
 		PROGDEV_PROTO_STATUS_RESP_OK		= 'K',
 		PROGDEV_PROTO_STATUS_RESP_ERROR		= 'R'
-	} ProgDeviceProtocolEnum;
+	} ;
 
 	typedef enum
 	{
@@ -122,18 +117,13 @@ private:
 	uint16_t crc16_calc(const uint8_t* const data, const size_t size) const {return 0x0000;};		// FIXME: implement crc16 function
 	
 public:
-	ProgDevice( SerialInterface* const pSerial) : opts(), serial(0)
-	{
-		if (0 == pSerial) 
-		{
-			throw ProgDevice_Error("no hardware interface instance specified for programming device");
-		}
-		this->serial = pSerial;
-	};
+	ProgDevice( SerialInterface* const pSerial);
 	
+	// spi device interface methods
 	void set_CS(const CS_State state)  const;
 	void data_xfer(const uint8_t* const src, uint8_t* const dst, const size_t size);
-
+	
+	// programmer specific aux methods
 	void util_link() const;
 	void util_exit_to(const uint32_t address) const;
 	void util_set_baudrate(const uint32_t b) const;
