@@ -280,5 +280,5 @@ void BaseSpiFlashMemoryDriver::erase(const uint32_t address, const size_t size)
 //------------------------------------------------------------------------------
 uint32_t BaseSpiFlashMemoryDriver::read_id()
 {
-	return 0;
+	return spiflash_dev->read_id();
 }

@@ -25,6 +25,7 @@ CPPFLAGS  += -lstdc++
 #CPPFLAGS += -Wextra -Wundef -Wcast-align
 #CPPFLAGS += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.cpp=.lst))
 CPPFLAGS += -ffunction-sections -fdata-sections
+CPPFLAGS += -std=c++11
 
 #===============================================================================
 ALL_CFLAGS   = $(COMMONFLAGS) $(CFLAGS)
@@ -33,6 +34,7 @@ ALL_CPPFLAGS = $(COMMONFLAGS) $(CPPFLAGS) -x c++
 #===============================================================================
 LDFLAGS = -Wl,-Map="$(BINDIR)/$(TARGETNAME).map"
 LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -std=c++11
 
 #===============================================================================
 ELFSIZE = $(SIZE) $(BINDIR)/$(TARGETNAME).elf -B -d --common

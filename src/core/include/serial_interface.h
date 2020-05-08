@@ -77,7 +77,7 @@ struct SerialOptions
 };
 
 //==============================================================================
-class HW_IO_Error : CommonException
+class HW_IO_Error : public CommonException
 {
 public:
 	HW_IO_Error () : CommonException("hardware interface","") 

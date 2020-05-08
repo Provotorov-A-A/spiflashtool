@@ -35,36 +35,17 @@ static const std::string operation_enum_to_string[] = {"NOT_SPECIFIED", "READ_ME
 //==============================================================================
 struct ProgDeviceOptions
 {
-	size_t 					address;
-	size_t 					size;
-	std::string 			filename;
 	bool 					check_crc;
-	bool 					verbose;
+	bool 					verbose;		// FIXME: use verbose option in operations
 	
-	ProgDeviceOptions() : 	address(0), size(0), filename(""), 
-							check_crc(false), verbose(false)
+	ProgDeviceOptions() : 	check_crc(false), verbose(false)
 	{ };
 							
-	ProgDeviceOptions(const ProgDeviceOptions& opts) : 	address(opts.address), size(opts.size), filename(opts.filename), 
-														check_crc(opts.check_crc), verbose(opts.verbose)
+	ProgDeviceOptions(const ProgDeviceOptions& opts) : 	check_crc(opts.check_crc), verbose(opts.verbose)
 	{};
-	
-	ProgDeviceOptions& operator= (const ProgDeviceOptions& opts)
-	{
-		this->address = opts.address;
-		this->size = opts.size;
-		this->filename = opts.filename;
-		this->check_crc = opts.check_crc;
-		this->verbose = opts.verbose;
-		
-		return *this;
-	};
-	
+
 	void print() const
 	{
-		std::cout << "	address 	: " << address << std::endl;
-		std::cout << "	size 		: " << size << std::endl;
-		std::cout << "	filename 	: " << filename << std::endl;
 		std::cout << "	check_crc 	: " << check_crc << std::endl;
 		std::cout << "	verbose 	: " << verbose << std::endl;
 	};
@@ -93,24 +74,17 @@ private:
 		PROGDEV_PROTO_HEADER_CMD_CS_SET		= 'O',
 		PROGDEV_PROTO_HEADER_CMD_CS_CLR		= 'Z',
 
-		PROGDEV_PROTO_HEADER_RESP_LINK		= 'L',
-		PROGDEV_PROTO_HEADER_RESP_START 	= 'S',
-		PROGDEV_PROTO_HEADER_RESP_EXIT		= 'E',
-		PROGDEV_PROTO_HEADER_RESP_BAUDRATE	= 'B',
-		PROGDEV_PROTO_HEADER_RESP_CS_SET	= 'O',
-		PROGDEV_PROTO_HEADER_RESP_CS_CLR	= 'Z',
+		PROGDEV_PROTO_HEADER_RESP_LINK		= PROGDEV_PROTO_HEADER_CMD_LINK,
+		PROGDEV_PROTO_HEADER_RESP_START 	= PROGDEV_PROTO_HEADER_CMD_START,
+		PROGDEV_PROTO_HEADER_RESP_EXIT		= PROGDEV_PROTO_HEADER_CMD_EXIT,
+		PROGDEV_PROTO_HEADER_RESP_BAUDRATE	= PROGDEV_PROTO_HEADER_CMD_BAUDRATE,
+		PROGDEV_PROTO_HEADER_RESP_CS_SET	= PROGDEV_PROTO_HEADER_CMD_CS_SET,
+		PROGDEV_PROTO_HEADER_RESP_CS_CLR	= PROGDEV_PROTO_HEADER_CMD_CS_CLR,
 		
 		PROGDEV_PROTO_STATUS_RESP_OK		= 'K',
 		PROGDEV_PROTO_STATUS_RESP_ERROR		= 'R'
 	} ;
 
-	typedef enum
-	{
-		USA_PROTO_STATUS_OK 		= 0x04,
-		USA_PROTO_STATUS_FAIL		= 0xEE
-	} uart_spi_adapter_proto_status;
-
-	static const size_t 	data_size_max = 512;
 	ProgDeviceOptions 		opts;
 	SerialInterface*		serial;
 	
@@ -126,9 +100,7 @@ public:
 	// programmer specific aux methods
 	void util_link() const;
 	void util_exit_to(const uint32_t address) const;
-	void util_set_baudrate(const uint32_t b) const;
+	void util_set_baudrate(const uint32_t b) const;		
 };
-
-
 
 #endif /* _PROGDEVICE_H_ */

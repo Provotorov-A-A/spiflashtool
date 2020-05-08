@@ -4,37 +4,30 @@
 //******************************************************************************
 //								INCLUDES
 //******************************************************************************
+#include <exception>
 #include <iostream>
 #include <string>
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-
 class CommonException
 {
+private:
+	static const std::string common_name;
+	
+	CommonException(const std::string d);
+
 protected:
 	std::string module_name;
 	std::string description;
-public:	
-	CommonException(std::string module, std::string d) : module_name(module), description(d) {};
-
-	const char* what() const 
-	{
-		return description.c_str();
-	};
 	
-	void print() const
-	{
-		if (0 == description.size())
-		{
-			std::cout << std::endl << "Unknown exception occured in module \"" << module_name << "\" : " << std::endl;
-		}
-		else
-		{
-			std::cout << std::endl << "Exception occured in module \"" << module_name << "\" : "<< description << std::endl;
-		}
-	}
+public:	
+	CommonException(const std::string module, const std::string d);
+
+	const char* what() const;
+	void print() const;
+	
 };
 
 #endif /* _COMMON_EXCEPTION_H_ */

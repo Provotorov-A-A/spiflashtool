@@ -10,33 +10,28 @@
 #include "common_exception.h"
 
 //******************************************************************************
-//								TYPES
-//******************************************************************************
-//==============================================================================
-struct KeyValuePair
+namespace ArgParser
 {
-	std::string key;
-	std::string value;
-};
-
-//==============================================================================
-class ArgParserException : CommonException
-{
-public:
-	ArgParserException(const std::string& str) : CommonException(std::string("Argument parser"), str) {};
-};
+	//--------------------------------------------------------------------------
+	struct KeyValuePair
+	{
+		std::string key;
+		std::string value;
+	};
+	
+	//--------------------------------------------------------------------------
+	class ArgParserException : public CommonException
+	{
+	private:
+		static const std::string module;
+	public:
+		ArgParserException(const std::string& str) 	: CommonException(module, str) {};
+		ArgParserException() 						: CommonException(module, "") {};
+	};
+	
+	//--------------------------------------------------------------------------
+	std::vector<KeyValuePair>* get_command_key_pairs(size_t argc, char *argv[]);
+}
 
 //******************************************************************************
-//								PROCEDURES	
-//******************************************************************************
-void parse(size_t argc, char *argv[]);
-
-
-
-
-
-
-
-
-
 #endif /* _ARGPARSER_H_ */

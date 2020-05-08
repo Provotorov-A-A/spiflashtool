@@ -3,7 +3,6 @@
 //								INCLUDES
 //******************************************************************************
 #include <string>
-#include "include/common_exception.h"
 #include "include/progdevice.h"
 #include <cstring>
 
@@ -43,7 +42,6 @@ void ProgDevice::util_link() const
 		throw ProgDevice_Error("link command failed");
 	}
 	
-				std::cout << "LINK OK!" << std::endl;
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +66,7 @@ void ProgDevice::util_exit_to(const uint32_t address) const
 //------------------------------------------------------------------------------
 void ProgDevice::util_set_baudrate(const uint32_t b) const
 {
-	// FIXME: implement util_set_baudrate
+	// FIXME: implement ProgDevice::util_set_baudrate method
 }
 
 //------------------------------------------------------------------------------
