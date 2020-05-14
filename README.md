@@ -25,7 +25,7 @@ Command				|	Description
 ------------------- |---------------------------------
 -address			|	spi flash memory address where read/write will be starts. Argument is an integer in decimal or hexadecimal format. Suffixes 'k', 'm' and 'g' are supported.
 -size				|	size of data that will be read/writen (in bytes). Argument is an integer in decimal or hex format. Suffixes 'k', 'm' and 'g' are supported. No size option in write operation means program all data from file.
--file 				|	data destibation/source file name.
+-file 				|	data destination/source file name.
 -verbose			|	print configuration and intermidiate data if possible.
 -m				|	select memory device and it's driver that will be used to operate. 'base' is the most common configuration (and is only avalaible just now:))
 
