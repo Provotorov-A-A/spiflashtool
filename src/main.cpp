@@ -1,49 +1,63 @@
 //******************************************************************************
 //								INCLUDES
 //******************************************************************************
-
-#include <iostream>
-#include <algorithm>
+#include <stdio.h>
+#include <vector>
+#include <exception>
 
 #include "core/include/arg_parser.h"
-#include "core/include/serial.h"
-#include "core/include/progdevice.h"
-#include "core/include/global_opts.h"
+#include "core/include/application.h"
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
 using namespace std;
 
+enum ApplicationResult : int
+{
+	APP_RESULT_FAIL = -1,
+	APP_RESULT_OK = 0
+};
+
 //******************************************************************************
 //								VARIABLES
 //******************************************************************************
-GlobalOptions global_opts;
+
+//******************************************************************************
+//								PROCEDURES
+//******************************************************************************
+
 //******************************************************************************
 //								ENTRY
 //******************************************************************************
 int main(int argc, char *argv[])
 {
-	// Command line arguments parsing
+	ApplicationResult result = APP_RESULT_FAIL;
+	std::vector<ArgParser::KeyValuePair>* arg_list;
+	std::cout.flush();
+	std::cerr.flush();
+	
 	try
 	{
-		parse(argc, argv);
+		arg_list = ArgParser::get_command_key_pairs(argc, argv);
+		SpiflashtoolApplication application(arg_list);
+		application.run();
+		result = APP_RESULT_OK;
 	}
-	catch (ArgParserException& e)
+	catch (ArgParser::ArgParserException& arg_err)
 	{
-		((CommonException&)e).print();
+		std::cerr.flush();
+		std::cerr << "Command line syntax error in argument[" << arg_err.get_arg_num() << "] \"" << arg_err.get_arg_value() << "\"" << std::endl;
 	}
-	catch(...)
+	catch (ApplicationError& app_err)
 	{
-		cout << "UNKNOWN EXCEPTION RAISED!" << std::endl;
+		std::cerr.flush();
+		std::cerr << app_err.what() << std::endl;
 	}
-
-	
-
-	
-	cout << "==================================================================" << endl;
-	global_opts.print();
-	cout << "==================================================================" << endl;
-		
-	return 0;
+	catch (...)
+	{
+		std::cerr.flush();
+		std::cerr << "Unexpected error ocurred"<< std::endl;
+	}
+	return result;
 }

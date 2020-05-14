@@ -1,10 +1,9 @@
-#ifndef  _SERIAL_H_
-#define _SERIAL_H_
+#ifndef  _SERIAL_INTERFACE_H_
+#define _SERIAL_INTERFACE_H_
 
 //******************************************************************************
 //								INCLUDES
 //******************************************************************************
-
 #include <cstdint>
 #include <string>
 
@@ -13,7 +12,6 @@
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-
 enum SerialOptionsParity
 {
 	SERIAL_OPTIONS_PARITY_NOPARITY = 0,
@@ -39,8 +37,6 @@ enum SerialOptionsStopBits
 //								VARIABLES
 //******************************************************************************
 
-static const std::string parity_enum_to_string[SERIAL_OPTIONS_PARITY_TOTAL_NUM] = {"NOPARITY", "ODDPARITY", "EVENPARITY", "MARKPARITY", "SPACEPARITY"};
-static const std::string stopbits_enum_to_string[SERIAL_OPTIONS_STOPBITS_TOTAL_NUM] = {"ONESTOPBIT", "ONE5STOPBITS", "TWOSTOPBITS"};
 
 //******************************************************************************
 //								TYPES
@@ -58,11 +54,22 @@ struct SerialOptions
 							baudrate(9600), 
 							parity(SERIAL_OPTIONS_PARITY_NOPARITY),
 							stopbits(SERIAL_OPTIONS_STOPBITS_ONESTOPBIT)
-							
 	{};
+	
+	SerialOptions& operator= (const SerialOptions& opt)
+	{
+		this->name 		= opt.name;
+		this->baudrate 	= opt.baudrate;
+		this->parity 	= opt.parity;
+		this->stopbits 	= opt.stopbits;
+		return *this;
+	}
 	
 	void print() const
 	{
+		static const std::string parity_enum_to_string[SERIAL_OPTIONS_PARITY_TOTAL_NUM] = {"NOPARITY", "ODDPARITY", "EVENPARITY", "MARKPARITY", "SPACEPARITY"};
+		static const std::string stopbits_enum_to_string[SERIAL_OPTIONS_STOPBITS_TOTAL_NUM] = {"ONESTOPBIT", "ONE5STOPBITS", "TWOSTOPBITS"};
+		
 		std::cout << "	name 		: " << name << std::endl;
 		std::cout << "	baudrate 	: " << baudrate << std::endl;
 		std::cout << "	parity 		: " << parity_enum_to_string[parity] << std::endl;
@@ -70,5 +77,23 @@ struct SerialOptions
 	}
 };
 
+//==============================================================================
+class HW_IO_Error : public CommonException
+{
+public:
+	HW_IO_Error () : CommonException("hardware interface","") 
+	{};
+	HW_IO_Error (const std::string& s) : CommonException("hardware interface", s) 
+	{};
+};
 
-#endif /* _SERIAL_H_ */
+//==============================================================================
+class SerialInterface
+{
+public:
+	virtual std::string get_name() = 0;
+	virtual void write(const uint8_t* const src, const size_t size) = 0;
+	virtual void read(uint8_t* const dst, const size_t size) = 0;
+};
+
+#endif /* _SERIAL_INTERFACE_H_ */
