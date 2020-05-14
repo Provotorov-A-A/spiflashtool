@@ -53,7 +53,8 @@ public:
 	// programmer specific aux methods
 	virtual void util_link() const = 0;
 	virtual void util_exit_to(const uint32_t address) const = 0;
-	virtual void util_set_baudrate(const uint32_t b) const = 0;				
+	virtual void util_set_baudrate(const uint32_t b) const = 0;		
+	virtual ~ProgDeviceInterface() {};
 };
 
 #endif /* _PROG_DEVICE_INTERFACE_H_ */

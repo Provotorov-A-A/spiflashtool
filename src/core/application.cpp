@@ -54,6 +54,12 @@ SpiflashtoolApplication::SpiflashtoolApplication(std::vector<ArgParser::KeyValue
 	try 
 	{
 		parse(pArgsList);
+		if (is_hardware_operation(global_opts.operation))
+		{
+			serial = new WindowsSerial(global_opts.hardware_if_opts);
+			program_device = new ProgDevice(serial);
+			selectMemory(global_opts.mem_id, program_device);
+		}				
 	}
 	catch (ApplicationParsingError& ex)
 	{
@@ -65,6 +71,10 @@ SpiflashtoolApplication::SpiflashtoolApplication(std::vector<ArgParser::KeyValue
 		std::string msg = (std::string)"Error \"" + (std::string)ex.get_msg() + (std::string)"\" occured with key \"" + (std::string)ex.get_key() + (std::string)"\" and value \"" + (std::string)ex.get_value() + (std::string)"\"\n";
 
 		throw(ApplicationError(this, msg));
+	}
+	catch (const CommonException& e)
+	{
+		throw ApplicationError(this, e.what()); 
 	}
 };
 
@@ -121,13 +131,8 @@ void SpiflashtoolApplication::run()
 
 	try 
 	{
-		if (is_hardware_operation(global_opts.operation))
-		{
-			serial = new WindowsSerial(global_opts.hardware_if_opts);
-			program_device = new ProgDevice(serial);
-			selectMemory(global_opts.mem_id, program_device);
-		}		
-				
+
+
 		// Perform specified operation
 		switch (global_opts.operation)
 		{

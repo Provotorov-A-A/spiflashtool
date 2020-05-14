@@ -11,7 +11,7 @@
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-class CommonException
+class CommonException : public std::exception
 {
 private:
 
@@ -24,7 +24,7 @@ public:
 	{	
 	};
 	
-	const char* what() const 
+	const char* what() const noexcept
 	{
 		return (module_name + " : " + description).c_str();
 	};

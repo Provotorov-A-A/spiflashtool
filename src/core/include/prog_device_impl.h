@@ -62,6 +62,7 @@ private:
 	
 public:
 	ProgDevice(SerialInterface* const pSerial);
+	~ProgDevice() {};
 	
 	// spi device interface methods
 	void set_CS(const CS_State state)  const;

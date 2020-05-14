@@ -28,8 +28,9 @@ public:
 	BaseSpiMemoryDriver(BaseSpiMemoryDeviceInterface* const mem_dev, const bool verbose = true) : 	verbose(verbose), 
 																							spiflash_dev(mem_dev)
 	{
-		if (0 == mem_dev) throw new SpiMemoryDriverError("illegal spiflash device instance");
+		if (0 == mem_dev) throw SpiMemoryDriverError("illegal spiflash device instance");
 	};
+	~BaseSpiMemoryDriver() {};
 
 	void read_mem_to_file(const std::string& filename, const uint32_t from_address, const size_t size);
 	void write_mem_from_file(const std::string& filename, const uint32_t to_address, const size_t size = 0);

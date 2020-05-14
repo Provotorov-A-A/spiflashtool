@@ -131,6 +131,13 @@ public:
 	const char* get_name() const {return app_name.c_str();} ;
 	//--------------------------------------------------------------------------	
 	void run();
+	~SpiflashtoolApplication()
+	{
+		if (mem_dev_driver) delete mem_dev_driver;
+		if (mem_dev) 		delete mem_dev;
+		if (program_device) delete program_device;
+		if (serial) 		delete serial;
+	}
 };
 
 //==============================================================================

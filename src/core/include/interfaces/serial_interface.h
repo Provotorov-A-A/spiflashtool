@@ -94,6 +94,7 @@ public:
 	virtual std::string get_name() = 0;
 	virtual void write(const uint8_t* const src, const size_t size) = 0;
 	virtual void read(uint8_t* const dst, const size_t size) = 0;
+	virtual ~SerialInterface() {};
 };
 
 #endif /* _SERIAL_INTERFACE_H_ */

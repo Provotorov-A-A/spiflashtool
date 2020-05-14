@@ -30,6 +30,7 @@ public:
 	virtual void write_mem_from_file(const std::string& filename, const uint32_t to_address, const size_t size = 0) = 0;
 	virtual void erase(const uint32_t from_address, const size_t size) = 0;
 	virtual uint32_t read_id() = 0;
+	virtual ~BaseSpiMemoryDriverInterface() {};
 };
 
 //==============================================================================

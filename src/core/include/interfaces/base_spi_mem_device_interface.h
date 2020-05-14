@@ -37,6 +37,8 @@ public:
 	virtual void write_enable() = 0;
 	virtual void write_disable() = 0;
 	virtual uint8_t read_status_reg() = 0;
+	
+	virtual ~BaseSpiMemoryDeviceInterface() {};
 };
 
 //==============================================================================
