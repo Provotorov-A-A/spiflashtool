@@ -23,10 +23,10 @@ Operation options might have one argument(-address 0x1000) or have no argument (
 operation options:
 Command				|	Description
 ------------------- |---------------------------------
--address			|	spi flash memory address where read/write will be starts. Argument is an integer in hexadecimal format (0x012ABCDEF).
--size				|	size of data that will be read/writen (in bytes). Argument is an integer in decimal format (1024). No size option in write operation means program all data from file.
+-address			|	spi flash memory address where read/write will be starts. Argument is an integer in decimal or hexadecimal format. Suffixes 'k', 'm' and 'g' are supported.
+-size				|	size of data that will be read/writen (in bytes). Argument is an integer in decimal or hex format. Suffixes 'k', 'm' and 'g' are supported. No size option in write operation means program all data from file.
 -file 				|	data destibation/source file name.
--verbose			|	print all intermidiate data.
+-verbose			|	print configuration and intermidiate data if possible.
 -m				|	select memory device and it's driver that will be used to operate. 'base' is the most common configuration (and is only avalaible just now:))
 
 ### Interface options:
