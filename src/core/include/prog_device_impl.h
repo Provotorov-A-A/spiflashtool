@@ -1,5 +1,5 @@
-#ifndef  _PROGDEVICE_H_
-#define _PROGDEVICE_H_
+#ifndef  _PROG_DEVICE_IMPL_H_
+#define _PROG_DEVICE_IMPL_H_
 
 /*
 	Description:
@@ -23,46 +23,16 @@
 #include <string>
 
 #include "common_exception.h"
-#include "spi_dev_if.h"
-#include "serial_interface.h"
+#include "interfaces/prog_device_interface.h"
+#include "interfaces/spi_device_interface.h"
+#include "interfaces/serial_interface.h"
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
 
-static const std::string operation_enum_to_string[] = {"NOT_SPECIFIED", "READ_MEM", "WRITE_MEM", "READ_JEDEC_ID", "ERASE_MEM"};
-
 //==============================================================================
-struct ProgDeviceOptions
-{
-	bool 					check_crc;
-	bool 					verbose;		// FIXME: use verbose option in operations
-	
-	ProgDeviceOptions() : 	check_crc(false), verbose(false)
-	{ };
-							
-	ProgDeviceOptions(const ProgDeviceOptions& opts) : 	check_crc(opts.check_crc), verbose(opts.verbose)
-	{};
-
-	void print() const
-	{
-		std::cout << "	check_crc 	: " << check_crc << std::endl;
-		std::cout << "	verbose 	: " << verbose << std::endl;
-	};
-};
-
-//==============================================================================
-class ProgDevice_Error : public CommonException
-{
-public:
-	ProgDevice_Error () : CommonException("programming device protocol", "")
-	{};
-	ProgDevice_Error (const std::string& s) : CommonException("programming device protocol",s)
-	{};
-};
-
-//==============================================================================
-class ProgDevice : public SpiDeviceInterface
+class ProgDevice : public ProgDeviceInterface
 {
 private:
 	enum ProgDeviceProtocolEnum : uint8_t
@@ -91,7 +61,7 @@ private:
 	uint16_t crc16_calc(const uint8_t* const data, const size_t size) const {return 0x0000;};		// FIXME: implement crc16 function
 	
 public:
-	ProgDevice( SerialInterface* const pSerial);
+	ProgDevice(SerialInterface* const pSerial);
 	
 	// spi device interface methods
 	void set_CS(const CS_State state)  const;
@@ -103,4 +73,4 @@ public:
 	void util_set_baudrate(const uint32_t b) const;		
 };
 
-#endif /* _PROGDEVICE_H_ */
+#endif /* _PROG_DEVICE_IMPL_H_ */

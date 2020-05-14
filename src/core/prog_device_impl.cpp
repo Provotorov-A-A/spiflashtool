@@ -3,12 +3,13 @@
 //								INCLUDES
 //******************************************************************************
 #include <string>
-#include "include/progdevice.h"
+#include "include/prog_device_impl.h"
 #include <cstring>
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
+static const std::string operation_enum_to_string[] = {"NOT_SPECIFIED", "READ_MEM", "WRITE_MEM", "READ_JEDEC_ID", "ERASE_MEM"};
 
 //******************************************************************************
 //								PROCEDURES
@@ -24,6 +25,7 @@ ProgDevice::ProgDevice( SerialInterface* const pSerial) : opts(), serial(0)
 	}
 	this->serial = pSerial;	
 }
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -49,7 +51,13 @@ void ProgDevice::util_link() const
 //------------------------------------------------------------------------------
 void ProgDevice::util_exit_to(const uint32_t address) const
 {
-	uint8_t data[1] = {PROGDEV_PROTO_HEADER_CMD_EXIT};
+	uint8_t data[5];
+	data[0] = PROGDEV_PROTO_HEADER_CMD_EXIT;
+	data[1] = address >> 24;
+	data[2] = address >> 16;
+	data[3] = address >> 8;
+	data[4] = address >> 0;
+
 	uint8_t resp[2] = {0x00, 0x00};
 
 	serial->write(data, sizeof(data));
@@ -119,7 +127,7 @@ void ProgDevice::data_xfer(const uint8_t* const src, uint8_t* const dst, const s
 
 	try
 	{
-		memset(inbuf, 0xEE, no_crc_in_size);
+		memset(inbuf, 'E', no_crc_in_size);
 		// Send start transaction command and size first
 		out_header[0] = PROGDEV_PROTO_HEADER_CMD_START;
 		out_header[1] = data_size & 0xFF;
@@ -145,6 +153,7 @@ void ProgDevice::data_xfer(const uint8_t* const src, uint8_t* const dst, const s
 		// Check header and status
 		if ( (inbuf[0] != PROGDEV_PROTO_HEADER_RESP_START) || (inbuf[1] != PROGDEV_PROTO_STATUS_RESP_OK) )
 		{
+			std::cout.flush();
 			std::cout << "inbuf[0] = " << (char)inbuf[0] << " inbuf[1] = " << (char)inbuf[1] << std::endl;
 			throw ProgDevice_Error("invalid response status or header");
 		}

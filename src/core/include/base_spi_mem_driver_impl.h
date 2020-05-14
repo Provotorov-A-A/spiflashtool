@@ -1,5 +1,5 @@
-#ifndef  _SPIFLASH_MEM_DRIVER_BASE_H_
-#define _SPIFLASH_MEM_DRIVER_BASE_H_
+#ifndef  _SPIFLASH_MEM_DRIVER_BASE_IMPL_H_
+#define _SPIFLASH_MEM_DRIVER_BASE_IMPL_H_
 
 //******************************************************************************
 //								INCLUDES
@@ -8,31 +8,25 @@
 #include <string>
 
 #include "common_exception.h"
-#include "base_spi_mem_dev.h"
+#include "interfaces/base_spi_mem_device_interface.h"
+#include "interfaces/base_spi_mem_driver_interface.h"
 
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-//==============================================================================
-class SpiMemoryDriverError : public CommonException
-{
-public:
-	SpiMemoryDriverError () : CommonException("spi flash memory driver","") 
-	{};
-	SpiMemoryDriverError (const std::string& s) : CommonException("spi memory driver", s) 
-	{};
-};
+#define STATUS_REGISTER_BITS_BUSY					(1 << 0)
 
 //==============================================================================
-class BaseSpiFlashMemoryDriver
+class BaseSpiMemoryDriver : public BaseSpiMemoryDriverInterface
 {
 private:
+	static const unsigned int WAIT_READY_TRIES_MAX = 100;
 	bool verbose;
-	BaseSpiMemoryDevice* spiflash_dev;
-	
+	BaseSpiMemoryDeviceInterface* spiflash_dev;
+	bool wait_ready();
 public:
-	BaseSpiFlashMemoryDriver(BaseSpiMemoryDevice* const mem_dev, const bool verbose = true) : 	verbose(verbose), 
-																								spiflash_dev(mem_dev)
+	BaseSpiMemoryDriver(BaseSpiMemoryDeviceInterface* const mem_dev, const bool verbose = true) : 	verbose(verbose), 
+																							spiflash_dev(mem_dev)
 	{
 		if (0 == mem_dev) throw new SpiMemoryDriverError("illegal spiflash device instance");
 	};
@@ -45,4 +39,4 @@ public:
 
 //==============================================================================
 
-#endif /* _SPIFLASH_MEM_DRIVER_BASE_H_ */
+#endif /* _SPIFLASH_MEM_DRIVER_BASE_IMPL_H_ */

@@ -20,13 +20,15 @@ namespace ArgParser
 	};
 	
 	//--------------------------------------------------------------------------
-	class ArgParserException : public CommonException
+	class ArgParserException 
 	{
 	private:
-		static const std::string module;
+		unsigned int error_argument_num;
+		std::string error_arg;
 	public:
-		ArgParserException(const std::string& str) 	: CommonException(module, str) {};
-		ArgParserException() 						: CommonException(module, "") {};
+		ArgParserException(const unsigned int error_arg_num, const std::string& err_arg) : error_argument_num(error_arg_num), error_arg(err_arg) {};
+		unsigned int get_arg_num() {return error_argument_num;};
+		const char* get_arg_value() {return error_arg.c_str();};
 	};
 	
 	//--------------------------------------------------------------------------

@@ -1,8 +1,10 @@
 ifndef _TARGET_RULES_MK_
 unexport _TARGET_RULES_MK_ = 1
 
-#CSTANDARD   = -std=gnu11
-#CPPSTANDARD = -std=gnu++11
+$(info $(GCC_COMMAND_LINE_DEFINES))
+
+CSTANDARD   = -std=gnu11
+CPPSTANDARD = -std=gnu++11
 
 COMMONFLAGS  = -Wall
 COMMONFLAGS += -O$(OPTIM)
@@ -25,7 +27,7 @@ CPPFLAGS  += -lstdc++
 #CPPFLAGS += -Wextra -Wundef -Wcast-align
 #CPPFLAGS += -Wa,-adhlns=$(LSTDIR)/$(notdir $(<:.cpp=.lst))
 CPPFLAGS += -ffunction-sections -fdata-sections
-CPPFLAGS += -std=c++11
+CPPFLAGS += $(CPPSTANDARD) 
 
 #===============================================================================
 ALL_CFLAGS   = $(COMMONFLAGS) $(CFLAGS)

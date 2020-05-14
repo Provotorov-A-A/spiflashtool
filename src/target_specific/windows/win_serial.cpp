@@ -1,8 +1,8 @@
 //******************************************************************************
 //								INCLUDES
 //******************************************************************************
-#include "../core/include/serial_interface.h"
-#include "include/win_serial.h"
+
+#include "win_serial.h"
 
 //******************************************************************************
 //								TYPES
@@ -45,11 +45,7 @@ void WindowsSerial::open()
  
     if ( hSerial == INVALID_HANDLE_VALUE ) 
     {
-        if (GetLastError() == ERROR_FILE_NOT_FOUND)
-        {
-			throw HW_IO_Error("open error");
-        }
-        throw HW_IO_Error("");;
+		throw HW_IO_Error("open error");
     }
     
     if (!GetCommState(hSerial, &dcbSerialParams)) 

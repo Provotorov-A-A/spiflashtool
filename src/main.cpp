@@ -22,7 +22,6 @@ enum ApplicationResult : int
 //******************************************************************************
 //								VARIABLES
 //******************************************************************************
-extern void printMem(const uint8_t* const pMemStart, const size_t size, const size_t offset);
 
 //******************************************************************************
 //								PROCEDURES
@@ -33,37 +32,32 @@ extern void printMem(const uint8_t* const pMemStart, const size_t size, const si
 //******************************************************************************
 int main(int argc, char *argv[])
 {
+	ApplicationResult result = APP_RESULT_FAIL;
 	std::vector<ArgParser::KeyValuePair>* arg_list;
+	std::cout.flush();
+	std::cerr.flush();
 	
 	try
 	{
 		arg_list = ArgParser::get_command_key_pairs(argc, argv);
-		
 		SpiflashtoolApplication application(arg_list);
 		application.run();
+		result = APP_RESULT_OK;
 	}
-	catch (const ArgParser::ArgParserException& e)
+	catch (ArgParser::ArgParserException& arg_err)
 	{
-		e.print();
-		if (arg_list) 
-		{
-			arg_list->clear();
-			delete arg_list;
-		}
-		exit(ApplicationResult::APP_RESULT_FAIL);
+		std::cerr.flush();
+		std::cerr << "Command line syntax error in argument[" << arg_err.get_arg_num() << "] \"" << arg_err.get_arg_value() << "\"" << std::endl;
 	}
-	catch (const CommonException& e)
+	catch (ApplicationError& app_err)
 	{
-		e.print();
-		exit(ApplicationResult::APP_RESULT_FAIL);
+		std::cerr.flush();
+		std::cerr << app_err.what() << std::endl;
 	}
-	catch (const std::exception& e)
+	catch (...)
 	{
-		e.what();
-		exit(ApplicationResult::APP_RESULT_FAIL);
+		std::cerr.flush();
+		std::cerr << "Unexpected error ocurred"<< std::endl;
 	}
-	
-	return ApplicationResult::APP_RESULT_OK;
+	return result;
 }
-
-

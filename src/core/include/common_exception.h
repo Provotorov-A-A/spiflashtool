@@ -14,20 +14,20 @@
 class CommonException
 {
 private:
-	static const std::string common_name;
-	
-	CommonException(const std::string d);
 
 protected:
 	std::string module_name;
 	std::string description;
 	
 public:	
-	CommonException(const std::string module, const std::string d);
-
-	const char* what() const;
-	void print() const;
+	CommonException(const std::string& module, const std::string& d) : module_name(module), description(d)
+	{	
+	};
 	
+	const char* what() const 
+	{
+		return (module_name + " : " + description).c_str();
+	};
 };
 
 #endif /* _COMMON_EXCEPTION_H_ */

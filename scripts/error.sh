@@ -1,0 +1,1 @@
+./OUTPUT/bin/spiflashtool.exe -write -filename resources/image.bin -t -address 512 -size 0 -port COM15 -baudrate 57600 -verbose

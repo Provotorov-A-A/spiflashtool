@@ -1,11 +1,28 @@
 #===============================================================================
+
+TARGET_OS = WINDOWS
+#TARGET_OS = UNIX
+
+#===============================================================================
 SOURCEDIRS := ./src/
 SOURCEDIRS += ./src/core/
-SOURCEDIRS += ./src/target_specific/
+ifeq ($(TARGET_OS), WINDOWS)
+SOURCEDIRS += ./src/target_specific/windows/
+CDEFS = -D _TARGET_WINDOWS_
+CPPDEFS = -D _TARGET_WINDOWS_
+else
+SOURCEDIRS += ./src/target_specific/unix/
+CDEFS = -D _TARGET_UNIX_
+CPPDEFS = -D _TARGET_UNIX_
+endif
+
 INCDIRS := $(SOURCEDIRS)
 INCDIRS += ./src/core/include/
-INCDIRS +=  ./src/target_specific/include
+INCDIRS += ./src/core/include/interfaces/
+
+
 OPTIM  = fast
+
 #===============================================================================
 TARGETNAME := $(notdir $(CURDIR))
 GNU_TOOLS = ""
@@ -40,6 +57,14 @@ erase:
 
 write:
 	./scripts/write.sh
+
+error:
+	./scripts/error.sh
+
+help:
+	./scripts/help.sh
+
+
 
 
 include $(PROJ_ROOT)/$(CONFIG_DIR)/build_rules.mk

@@ -1,5 +1,5 @@
-#ifndef  _SPI_DEV_IF_H_
-#define _SPI_DEV_IF_H_
+#ifndef  _SPI_DEVICE_IF_H_
+#define _SPI_DEVICE_IF_H_
 
 //******************************************************************************
 //								INCLUDES
@@ -23,10 +23,10 @@ enum CS_State
 class SpiDeviceInterface
 {
 public:
-	virtual void set_CS(const CS_State state) const;
-	virtual void data_xfer(const uint8_t* const src, uint8_t* const dst, const size_t size);
+	virtual void set_CS(const CS_State state) const = 0;
+	virtual void data_xfer(const uint8_t* const src, uint8_t* const dst, const size_t size) = 0;
 };
 //==============================================================================
 
 
-#endif /* _SPI_DEV_IF_H_ */
+#endif /* _SPI_DEVICE_IF_H_ */

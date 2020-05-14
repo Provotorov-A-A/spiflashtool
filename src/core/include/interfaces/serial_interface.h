@@ -1,5 +1,5 @@
-#ifndef  _SERIAL_H_
-#define _SERIAL_H_
+#ifndef  _SERIAL_INTERFACE_H_
+#define _SERIAL_INTERFACE_H_
 
 //******************************************************************************
 //								INCLUDES
@@ -37,8 +37,6 @@ enum SerialOptionsStopBits
 //								VARIABLES
 //******************************************************************************
 
-static const std::string parity_enum_to_string[SERIAL_OPTIONS_PARITY_TOTAL_NUM] = {"NOPARITY", "ODDPARITY", "EVENPARITY", "MARKPARITY", "SPACEPARITY"};
-static const std::string stopbits_enum_to_string[SERIAL_OPTIONS_STOPBITS_TOTAL_NUM] = {"ONESTOPBIT", "ONE5STOPBITS", "TWOSTOPBITS"};
 
 //******************************************************************************
 //								TYPES
@@ -69,6 +67,9 @@ struct SerialOptions
 	
 	void print() const
 	{
+		static const std::string parity_enum_to_string[SERIAL_OPTIONS_PARITY_TOTAL_NUM] = {"NOPARITY", "ODDPARITY", "EVENPARITY", "MARKPARITY", "SPACEPARITY"};
+		static const std::string stopbits_enum_to_string[SERIAL_OPTIONS_STOPBITS_TOTAL_NUM] = {"ONESTOPBIT", "ONE5STOPBITS", "TWOSTOPBITS"};
+		
 		std::cout << "	name 		: " << name << std::endl;
 		std::cout << "	baudrate 	: " << baudrate << std::endl;
 		std::cout << "	parity 		: " << parity_enum_to_string[parity] << std::endl;
@@ -90,9 +91,9 @@ public:
 class SerialInterface
 {
 public:
-	virtual std::string get_name();
-	virtual void write(const uint8_t* const src, const size_t size);
-	virtual void read(uint8_t* const dst, const size_t size);
+	virtual std::string get_name() = 0;
+	virtual void write(const uint8_t* const src, const size_t size) = 0;
+	virtual void read(uint8_t* const dst, const size_t size) = 0;
 };
 
-#endif /* _SERIAL_H_ */
+#endif /* _SERIAL_INTERFACE_H_ */

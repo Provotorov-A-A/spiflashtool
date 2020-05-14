@@ -12,7 +12,6 @@ using namespace ArgParser;
 //******************************************************************************
 //								VARIABLES
 //******************************************************************************
-const std::string ArgParser::ArgParserException::module = "Argument parser";
 
 //******************************************************************************
 //								PROCEDURES	
@@ -33,7 +32,7 @@ std::vector<KeyValuePair>* ArgParser::get_command_key_pairs(size_t argc, char *a
 	
 	if (argc < 2)
 	{
-		throw(ArgParserException("no arguments"));
+		throw(*(new ArgParserException(2, "no arguments")));
 	}
 	
 	pairsList = new std::vector<KeyValuePair>;
@@ -77,7 +76,7 @@ std::vector<KeyValuePair>* ArgParser::get_command_key_pairs(size_t argc, char *a
 				string msg = "Expect key at Arg[" + std::to_string(i) + "] but value \"" + string(argv[i]) + "\" found";
 				pairsList->clear();
 				delete pairsList;
-				throw(ArgParserException(msg));
+				throw(*(new ArgParserException(i, msg)));
 			}
 			else
 			{

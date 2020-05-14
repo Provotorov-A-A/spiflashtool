@@ -5,7 +5,7 @@
 #include <cstring>
 #include <string>
 
-#include "include/base_spi_mem_dev.h"
+#include "include/base_spi_mem_device_impl.h"
 
 //******************************************************************************
 //								PROCEDURES
@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void BaseSpiMemoryDevice::erase_sector(const uint32_t dst_address) const
+void BaseSpiMemoryDevice::erase_sector(const uint32_t dst_address)
 {
 	uint8_t out_data_header[4];
 	uint8_t in_data[] = {0x00, 0x00, 0x00, 0x00};
@@ -31,7 +31,7 @@ void BaseSpiMemoryDevice::erase_sector(const uint32_t dst_address) const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void BaseSpiMemoryDevice::program_page(const uint32_t dst_address, const uint8_t* const src, const size_t size) const
+void BaseSpiMemoryDevice::program_page(const uint32_t dst_address, const uint8_t* const src, const size_t size)
 {
 	uint8_t out_data_header[4];
 	
@@ -61,7 +61,7 @@ void BaseSpiMemoryDevice::program_page(const uint32_t dst_address, const uint8_t
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void BaseSpiMemoryDevice::read_data(const uint32_t src_address, uint8_t* const dst, const size_t size) const
+void BaseSpiMemoryDevice::read_data(const uint32_t src_address, uint8_t* const dst, const size_t size)
 {
 	uint8_t out_data_header[4];
 	uint8_t dummy_in_data[4];
@@ -93,7 +93,7 @@ void BaseSpiMemoryDevice::read_data(const uint32_t src_address, uint8_t* const d
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint32_t BaseSpiMemoryDevice::read_id() const
+uint32_t BaseSpiMemoryDevice::read_id()
 {
 	uint8_t out_data[] = {SpiFlashProtoCommands::SPIFLASH_COMMAND_READ_ID, 0xFF, 0xFF, 0xFF};
 	uint8_t in_data[] = {0x00, 0x00, 0x00, 0x00};
@@ -108,7 +108,7 @@ uint32_t BaseSpiMemoryDevice::read_id() const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void BaseSpiMemoryDevice::write_enable() const
+void BaseSpiMemoryDevice::write_enable()
 {
 	uint8_t out_data_header[1] = {SpiFlashProtoCommands::SPIFLASH_COMMAND_WRITE_ENABLE};
 	uint8_t dummy_in_data[1];
@@ -122,7 +122,7 @@ void BaseSpiMemoryDevice::write_enable() const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-void BaseSpiMemoryDevice::write_disable() const
+void BaseSpiMemoryDevice::write_disable()
 {
 	uint8_t out_data_header[1] = {SpiFlashProtoCommands::SPIFLASH_COMMAND_WRITE_DISABLE};
 	uint8_t dummy_in_data[1];
@@ -135,7 +135,7 @@ void BaseSpiMemoryDevice::write_disable() const
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-uint8_t BaseSpiMemoryDevice::read_status_reg() const
+uint8_t BaseSpiMemoryDevice::read_status_reg()
 {
 	uint8_t out_data[] = {SpiFlashProtoCommands::SPIFLASH_COMMAND_READ_STATUS_REG, 0xFF};
 	uint8_t in_data[] = {0x00, 0x00};

@@ -3,7 +3,7 @@
 //******************************************************************************
 //								INCLUDES
 //******************************************************************************
-#include "../../core/include/serial_interface.h"
+#include "../../core/include/interfaces/serial_interface.h"
 #include <errno.h>
 #include <windows.h>
 
@@ -15,7 +15,7 @@
 //******************************************************************************
 //								TYPES
 //******************************************************************************
-class WindowsSerial : SerialInterface
+class WindowsSerial : public SerialInterface
 {
 private:
 	std::string name;
