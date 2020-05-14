@@ -25,7 +25,7 @@ Command				|	Description
 ------------------- |---------------------------------
 -address			|	spi flash memory address where read/write will be starts. Argument is an integer in decimal or hexadecimal format. Suffixes 'k', 'm' and 'g' are supported.
 -size				|	size of data that will be read/writen (in bytes). Argument is an integer in decimal or hex format. Suffixes 'k', 'm' and 'g' are supported. No size option in write operation means program all data from file.
--file 				|	data destination/source file name.
+-filename 				|	data destination/source file name.
 -verbose			|	print configuration and intermidiate data if possible.
 -m				|	select memory device and it's driver that will be used to operate. 'base' is the most common configuration (and is only avalaible just now:)). If no -m option was specified than 'base' configuration will be applied. 
 -crc    | IN WORK! Add CRC for prog. device protocol.
@@ -42,7 +42,7 @@ Command				|	Description
 `<spi_flash_burner -read_id -port COM15 -baudrate 57600>`
 
 *Read memory to file*
-`<spi_flash_burner -m base -read -port COM15 -baudrate 115200 -address 0x00 -size 512 -file "c:\work\flash.img" -verbose>`
+`<spi_flash_burner -m base -read -port COM15 -baudrate 115200 -address 32K -size 2M -filename "c:\work\flash.img" >`
 
 *Write data from file to memory*
-`<spi_flash_burner -m base -write -port COM15 -baudrate 115200 -address 0x00 -size 2048 -file "c:\work\flash.img" -verbose>`
+`<spi_flash_burner -m base -write -port COM15 -baudrate 115200 -address 0x1000 -filename "c:\work\flash.img" -verbose>`
