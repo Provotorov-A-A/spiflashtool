@@ -14,6 +14,8 @@ Command				|	Description
 -read				|	read memory to file.
 -write				|	program memory to file.
 -erase				|	erase (full chip only).
+-link				|	test connection with prog. device
+-jump				|	prog. device performs jump to specified address (auxiliary function for device testing)
 -help				|	print help.
 
 ### Operation options.
@@ -25,6 +27,7 @@ Command				|	Description
 -size				|	size of data that will be read/writen (in bytes). Argument is an integer in decimal format (1024). No size option in write operation means program all data from file.
 -file 				|	data destibation/source file name.
 -verbose			|	print all intermidiate data.
+-m				|	select memory device and it's driver that will be used to operate. 'base' is the most common configuration (and is only avalaible just now:))
 
 ### Interface options:
 Command				|	Description
