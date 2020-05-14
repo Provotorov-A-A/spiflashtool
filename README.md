@@ -3,7 +3,7 @@ PC-side software of spi flash programmer.
 Command-line tool for read, program and erase spi flash memory.
 
 ## Command line interface.
-spi_flash_burner <operation> <operation options> <interface options> 
+spiflashtool <operation> <operation options> <interface options> 
 
 ### Operation commands.
 Operation commands have no options.
@@ -39,10 +39,10 @@ Command				|	Description
 
 ### Examples
 *Read Jedec id*
-`<spi_flash_burner -read_id -port COM15 -baudrate 57600>`
+`<spiflashtool -read_id -port COM15 -baudrate 57600>`
 
 *Read memory to file*
-`<spi_flash_burner -m base -read -port COM15 -baudrate 115200 -address 32K -size 2M -filename "c:\work\flash.img" >`
+`<spiflashtool -m base -read -port COM15 -baudrate 115200 -address 32K -size 2M -filename "c:\work\flash.img" >`
 
 *Write data from file to memory*
-`<spi_flash_burner -m base -write -port COM15 -baudrate 115200 -address 0x1000 -filename "c:\work\flash.img" -verbose>`
+`<spiflashtool -m base -write -port COM15 -baudrate 115200 -address 0x1000 -filename "c:\work\flash.img" -verbose>`
